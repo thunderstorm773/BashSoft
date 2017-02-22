@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Predicate;
 
-public class RepositoryFilters {
-    public static void printFilteredStudents(
-            HashMap<String, ArrayList<Integer>> courseData,
+public class RepositoryFilter {
+    public void printFilteredStudents(
+            HashMap<String, Double> studentsWithMarks,
             String filterType,
             Integer numberOfStudents) {
 
@@ -21,30 +21,21 @@ public class RepositoryFilters {
         }
 
         int studentsCount = 0;
-        for (String student : courseData.keySet()) {
+        for (String student : studentsWithMarks.keySet()) {
             if (studentsCount >= numberOfStudents) {
                 break;
             }
 
-            ArrayList<Integer> studentMarks = courseData.get(student);
-
-            Double averageMark = studentMarks
-                    .stream()
-                    .mapToInt(Integer::valueOf)
-                    .average()
-                    .getAsDouble();
-
-            Double percentageOfFulfilment = averageMark / 100;
-            Double mark = percentageOfFulfilment * 4 + 2;
+            Double mark = studentsWithMarks.get(student);
 
             if (filter.test(mark)) {
-                OutputWriter.printStudent(student, studentMarks);
+                OutputWriter.printStudent(student, mark);
                 studentsCount++;
             }
         }
     }
 
-    private static Predicate<Double> createFilter(String filterType) {
+    private Predicate<Double> createFilter(String filterType) {
         switch (filterType) {
             case "excellent":
                 return mark -> mark >= 5.0;
