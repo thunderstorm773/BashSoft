@@ -3,6 +3,7 @@ package bg.softuni.io;
 import bg.softuni.staticData.SessionData;
 import bg.softuni.staticData.ExceptionMessages;
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -50,12 +51,12 @@ public class IOManager {
         File file = new File(path);
         boolean wasDirMade = file.mkdir();
         if (!wasDirMade) {
-            OutputWriter.displayException(
-                    ExceptionMessages.FORBIDDEN_SYMBOLS_CONTAINED_IN_NAME);
+           throw new IllegalArgumentException(
+                   ExceptionMessages.FORBIDDEN_SYMBOLS_CONTAINED_IN_NAME);
         }
     }
 
-    public void changeCurrentDirRelativePath(String relativePath) {
+    public void changeCurrentDirRelativePath(String relativePath) throws IOException {
         if (relativePath.equals("..")) {
             // go one directory up
             try {
@@ -64,7 +65,8 @@ public class IOManager {
                 String newPath = currentPath.substring(0, indexOfLastSlash);
                 SessionData.currentPath = newPath;
             } catch (StringIndexOutOfBoundsException sioobe) {
-                OutputWriter.displayException(ExceptionMessages.INVALID_DESTINATION);
+                throw new StringIndexOutOfBoundsException(
+                        ExceptionMessages.INVALID_DESTINATION);
             }
         } else {
             // go to a given directory
@@ -74,11 +76,11 @@ public class IOManager {
         }
     }
 
-    public void changeCurrentDirAbsolute(String absolutePath) {
+    public void changeCurrentDirAbsolute(String absolutePath) throws IOException {
         File file = new File(absolutePath);
         if (!file.exists()) {
-            OutputWriter.displayException(ExceptionMessages.INVALID_PATH);
-            return;
+
+            throw new IOException(ExceptionMessages.INVALID_PATH);
         }
 
         SessionData.currentPath = absolutePath;

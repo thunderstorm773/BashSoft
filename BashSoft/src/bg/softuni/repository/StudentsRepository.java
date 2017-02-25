@@ -28,8 +28,7 @@ public class StudentsRepository {
 
     public void loadData(String fileName) throws IOException {
         if (this.isDataInitialized) {
-            OutputWriter.displayException(ExceptionMessages.DATA_ALREADY_INITIALIZED);
-            return;
+            throw new RuntimeException(ExceptionMessages.DATA_ALREADY_INITIALIZED);
         }
 
         this.students = new LinkedHashMap<>();
@@ -96,7 +95,7 @@ public class StudentsRepository {
                     student.setMarksInCourse(courseName, scores);
                     course.enrollStudent(student);
                 }catch (NumberFormatException nfe) {
-                    OutputWriter.displayException(nfe.getMessage() + " at line: " + line);
+                    throw new NumberFormatException(nfe.getMessage() + " at line: " + line);
                 }
             }
         }
@@ -110,8 +109,8 @@ public class StudentsRepository {
             return;
         }
 
-        double mark = this.courses.get(courseName).studentsByName
-                .get(studentName).marksByCourseName.get(courseName);
+        double mark = this.courses.get(courseName).getStudentsByName()
+                .get(studentName).getMarksByCourseName().get(courseName);
         OutputWriter.printStudent(studentName, mark);
     }
 
@@ -121,7 +120,7 @@ public class StudentsRepository {
         }
 
         OutputWriter.writeMessageOnNewLine(courseName + ":");
-        for (Map.Entry<String, Student> student : this.courses.get(courseName).studentsByName.entrySet()) {
+        for (Map.Entry<String, Student> student : this.courses.get(courseName).getStudentsByName().entrySet()) {
             this.getStudentMarkInCourse(courseName, student.getKey());
         }
     }
@@ -145,7 +144,7 @@ public class StudentsRepository {
             return false;
         }
 
-        if (!this.courses.get(courseName).studentsByName.containsKey(studentName)) {
+        if (!this.courses.get(courseName).getStudentsByName().containsKey(studentName)) {
             OutputWriter.displayException(ExceptionMessages.NON_EXISTING_STUDENT);
             return false;
         }
@@ -154,7 +153,7 @@ public class StudentsRepository {
     }
 
     public void filterAndTake(String courseName, String filter) {
-        int studentsToTake = this.courses.get(courseName).studentsByName.size();
+        int studentsToTake = this.courses.get(courseName).getStudentsByName().size();
         filterAndTake(courseName, filter, studentsToTake);
     }
 
@@ -165,8 +164,8 @@ public class StudentsRepository {
         }
 
         LinkedHashMap<String, Double> marks = new LinkedHashMap<>();
-        for (Map.Entry<String, Student> entry: this.courses.get(courseName).studentsByName.entrySet()) {
-            marks.put(entry.getKey(), entry.getValue().marksByCourseName.get(courseName));
+        for (Map.Entry<String, Student> entry: this.courses.get(courseName).getStudentsByName().entrySet()) {
+            marks.put(entry.getKey(), entry.getValue().getMarksByCourseName().get(courseName));
         }
 
         this.filter.printFilteredStudents(
@@ -180,8 +179,8 @@ public class StudentsRepository {
         }
 
         LinkedHashMap<String, Double> marks = new LinkedHashMap<>();
-        for (Map.Entry<String, Student> entry: this.courses.get(courseName).studentsByName.entrySet()) {
-            marks.put(entry.getKey(), entry.getValue().marksByCourseName.get(courseName));
+        for (Map.Entry<String, Student> entry: this.courses.get(courseName).getStudentsByName().entrySet()) {
+            marks.put(entry.getKey(), entry.getValue().getMarksByCourseName().get(courseName));
         }
 
         this.sorter.printSortedStudents(
@@ -189,7 +188,7 @@ public class StudentsRepository {
     }
 
     public void orderAndTake(String courseName, String orderType) {
-        int studentsToTake = this.courses.get(courseName).studentsByName.size();
+        int studentsToTake = this.courses.get(courseName).getStudentsByName().size();
         orderAndTake(courseName, orderType, studentsToTake);
     }
 }

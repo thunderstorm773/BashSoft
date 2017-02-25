@@ -2,44 +2,62 @@ package models;
 
 import bg.softuni.io.OutputWriter;
 import bg.softuni.staticData.ExceptionMessages;
-import com.sun.org.apache.regexp.internal.RE;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class Student {
 
-    public String username;
-    public LinkedHashMap<String, Course> enrolledCourses;
-    public LinkedHashMap<String, Double> marksByCourseName;
+    private String username;
+    private LinkedHashMap<String, Course> enrolledCourses;
+    private LinkedHashMap<String, Double> marksByCourseName;
 
     public Student(String username) {
 
-        this.username = username;
+        this.setUsername(username);
         this.enrolledCourses = new LinkedHashMap<>();
         this.marksByCourseName = new LinkedHashMap<>();
     }
 
-    public void enrollInCourse(Course course) {
-        if (this.enrolledCourses.containsKey(course.name)) {
-            OutputWriter.displayException(String.format(
-                    ExceptionMessages.STUDENT_ALREADY_ENROLLED_IN_GIVEN_COURSE,
-                    this.username, course.name));
-            return;
+    public String getUsername() {
+        return this.username;
+    }
+
+    public void setUsername(String username) {
+        if (username == null || username.equals("")) {
+            throw new IllegalArgumentException(ExceptionMessages.NULL_OR_EMPTY_VALUE);
         }
 
-        this.enrolledCourses.put(course.name, course);
+        this.username = username;
+    }
+
+    public Map<String, Course> getEnrolledCourses() {
+        return Collections.unmodifiableMap(this.enrolledCourses);
+    }
+
+    public Map<String, Double> getMarksByCourseName() {
+        return Collections.unmodifiableMap(this.marksByCourseName);
+    }
+
+    public void enrollInCourse(Course course) {
+        if (this.enrolledCourses.containsKey(course.getName())) {
+            throw new IllegalArgumentException(String.format(
+                    ExceptionMessages.STUDENT_ALREADY_ENROLLED_IN_GIVEN_COURSE,
+                    this.getUsername(), course.getName()));
+        }
+
+        this.enrolledCourses.put(course.getName(), course);
     }
 
     public void setMarksInCourse(String courseName, int... scores) {
         if (!this.enrolledCourses.containsKey(courseName)) {
-            OutputWriter.displayException(ExceptionMessages.NOT_ENROLLED_IN_COURSE);
-            return;
+            throw new IllegalArgumentException(ExceptionMessages.NOT_ENROLLED_IN_COURSE);
         }
 
         if (scores.length > Course.NUMBER_OF_TASKS_ON_EXAM) {
-            OutputWriter.displayException(ExceptionMessages.INVALID_NUMBER_OF_SCORES);
-            return;
+            throw new IllegalArgumentException(ExceptionMessages.INVALID_NUMBER_OF_SCORES);
         }
 
         double mark = calculateMark(scores);

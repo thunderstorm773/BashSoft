@@ -28,6 +28,20 @@ public class CommandInterpreter {
     void interpretCommand(String input) throws IOException {
         String[] data = input.split("\\s+");
         String command = data[0].toLowerCase();
+        try {
+            parseCommand(input, data, command);
+        }catch (IllegalArgumentException iae) {
+            OutputWriter.displayException(iae.getMessage());
+        }catch (StringIndexOutOfBoundsException sioobe) {
+            OutputWriter.displayException(sioobe.getMessage());
+        }catch (IOException ioe) {
+            OutputWriter.displayException(ioe.getMessage());
+        }catch (Throwable t) {
+            OutputWriter.displayException(t.getMessage());
+        }
+    }
+
+    private void parseCommand(String input, String[] data, String command) throws IOException {
         switch (command) {
             case "open":
                 tryOpenFile(input, data);
@@ -239,7 +253,7 @@ public class CommandInterpreter {
         this.repository.loadData(fileName);
     }
 
-    private void tryChangeAbsolutePath(String input, String[] data) {
+    private void tryChangeAbsolutePath(String input, String[] data) throws IOException {
         if (data.length != 2) {
             displayInvalidCommandMessage(input);
             return;
@@ -249,7 +263,7 @@ public class CommandInterpreter {
         this.ioManager.changeCurrentDirAbsolute(absolutePath);
     }
 
-    private void tryChangeRelativePath(String input, String[] data) {
+    private void tryChangeRelativePath(String input, String[] data) throws IOException {
         if (data.length != 2) {
             displayInvalidCommandMessage(input);
             return;

@@ -1,7 +1,5 @@
 package bg.softuni.io;
 
-import java.util.List;
-
 public class OutputWriter {
 
     public static void writeMessage(String message)
