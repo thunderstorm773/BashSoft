@@ -1,5 +1,6 @@
 package bg.softuni.judge;
 
+import bg.softuni.exceptions.InvalidPathException;
 import bg.softuni.io.OutputWriter;
 import bg.softuni.staticData.ExceptionMessages;
 
@@ -29,7 +30,7 @@ public class Tester {
                 OutputWriter.writeMessageOnNewLine("Files are identical. There are no mismatches.");
             }
         } catch (IOException ioe) {
-            throw new IOException(ExceptionMessages.INVALID_PATH);
+            throw new InvalidPathException();
         }
     }
 

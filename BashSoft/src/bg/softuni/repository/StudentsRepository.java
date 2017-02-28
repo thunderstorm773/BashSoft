@@ -1,5 +1,6 @@
 package bg.softuni.repository;
 
+import bg.softuni.exceptions.InitializedException;
 import bg.softuni.staticData.SessionData;
 import bg.softuni.io.OutputWriter;
 import bg.softuni.staticData.ExceptionMessages;
@@ -28,7 +29,7 @@ public class StudentsRepository {
 
     public void loadData(String fileName) throws IOException {
         if (this.isDataInitialized) {
-            throw new RuntimeException(ExceptionMessages.DATA_ALREADY_INITIALIZED);
+            throw new InitializedException();
         }
 
         this.students = new LinkedHashMap<>();

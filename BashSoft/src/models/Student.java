@@ -1,5 +1,9 @@
 package models;
 
+import bg.softuni.exceptions.DuplicateEntryInStructureException;
+import bg.softuni.exceptions.InvalidStringException;
+import bg.softuni.exceptions.KeyNotFoundException;
+import bg.softuni.exceptions.NumberOutOfRangeException;
 import bg.softuni.io.OutputWriter;
 import bg.softuni.staticData.ExceptionMessages;
 
@@ -25,9 +29,9 @@ public class Student {
         return this.username;
     }
 
-    public void setUsername(String username) {
+    private void setUsername(String username) {
         if (username == null || username.equals("")) {
-            throw new IllegalArgumentException(ExceptionMessages.NULL_OR_EMPTY_VALUE);
+            throw new InvalidStringException();
         }
 
         this.username = username;
@@ -43,9 +47,7 @@ public class Student {
 
     public void enrollInCourse(Course course) {
         if (this.enrolledCourses.containsKey(course.getName())) {
-            throw new IllegalArgumentException(String.format(
-                    ExceptionMessages.STUDENT_ALREADY_ENROLLED_IN_GIVEN_COURSE,
-                    this.getUsername(), course.getName()));
+            throw new DuplicateEntryInStructureException(this.username, course.getName());
         }
 
         this.enrolledCourses.put(course.getName(), course);
@@ -53,11 +55,11 @@ public class Student {
 
     public void setMarksInCourse(String courseName, int... scores) {
         if (!this.enrolledCourses.containsKey(courseName)) {
-            throw new IllegalArgumentException(ExceptionMessages.NOT_ENROLLED_IN_COURSE);
+            throw new KeyNotFoundException();
         }
 
         if (scores.length > Course.NUMBER_OF_TASKS_ON_EXAM) {
-            throw new IllegalArgumentException(ExceptionMessages.INVALID_NUMBER_OF_SCORES);
+            throw new NumberOutOfRangeException();
         }
 
         double mark = calculateMark(scores);

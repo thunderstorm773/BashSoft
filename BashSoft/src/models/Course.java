@@ -1,5 +1,7 @@
 package models;
 
+import bg.softuni.exceptions.DuplicateEntryInStructureException;
+import bg.softuni.exceptions.InvalidStringException;
 import bg.softuni.io.OutputWriter;
 import bg.softuni.staticData.ExceptionMessages;
 
@@ -16,8 +18,16 @@ public class Course {
     private LinkedHashMap<String, Student> studentsByName;
 
     public Course(String name) {
-        this.name = name;
+        this.setName(name);
         this.studentsByName = new LinkedHashMap<>();
+    }
+
+    public void setName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new InvalidStringException();
+        }
+
+        this.name = name;
     }
 
     public String getName() {
@@ -30,9 +40,7 @@ public class Course {
 
     public void enrollStudent(Student student) {
         if (this.studentsByName.containsKey(student.getUsername())) {
-            throw new IllegalArgumentException(String.format(
-                    ExceptionMessages.STUDENT_ALREADY_ENROLLED_IN_GIVEN_COURSE,
-                    student.getUsername(), this.getName()));
+            throw new DuplicateEntryInStructureException(student.getUsername(), this.name);
         }
 
         this.studentsByName.put(student.getUsername(), student);
